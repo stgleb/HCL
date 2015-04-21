@@ -10,15 +10,15 @@ with db_session:
     c4 = Component(name="Intel 82580",
                    vendor="Intel", type="NIC", comments="nothing")
 
-    cert1 = Certification(fuel_version="Fuel 5.0", date=datetime.now())
-    cert2 = Certification(fuel_version="Fuel 6.0", date=datetime.now())
-    cert3 = Certification(fuel_version="Fuel 5.1", date=datetime.now())
-    cert4 = Certification(fuel_version="Fuel 6.1", date=datetime.now())
-    cert5 = Certification(fuel_version="Fuel 4.1", date=datetime.now())
-    cert6 = Certification(fuel_version="Fuel 5.1", date=datetime.now())
-    cert7 = Certification(fuel_version="Fuel 6.1", date=datetime.now())
-    cert8 = Certification(fuel_version="Fuel 5.1", date=datetime.now())
-    cert9 = Certification(fuel_version="Fuel 6.0", date=datetime.now())
+    cert1 = Certification(fuel_version="Fuel5.0", date=datetime.now())
+    cert2 = Certification(fuel_version="Fuel6.0", date=datetime.now())
+    cert3 = Certification(fuel_version="Fuel5.1", date=datetime.now())
+    cert4 = Certification(fuel_version="Fuel6.1", date=datetime.now())
+    cert5 = Certification(fuel_version="Fuel4.1", date=datetime.now())
+    cert6 = Certification(fuel_version="Fuel5.1", date=datetime.now())
+    cert7 = Certification(fuel_version="Fuel6.1", date=datetime.now())
+    cert8 = Certification(fuel_version="Fuel5.1", date=datetime.now())
+    cert9 = Certification(fuel_version="Fuel6.0", date=datetime.now())
 
     s1 = Server(name="SuperMicro SuperServer 6027TR-H71RF+", vendor="Supermicro",
                 specification_url="http://www.supermicro.com/products/system/3U/5037/SYS-5037MR-H8TRF.cfm")

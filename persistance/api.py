@@ -1,5 +1,3 @@
-
-
 # method get server by name or list of all servers
 from persistance.models import Server, Component
 from pony.orm.core import select, db_session
@@ -24,7 +22,7 @@ def select_servers(name=None):
 
 
 @db_session
-def select_certified_servers(fuel_versions=None, server_name=None, vendor_name=None):
+def select_certified_servers(fuel_versions=None, name=None, vendor=None):
     servers = select(s for s in Server)[:]
 
     if fuel_versions is not None:
@@ -40,11 +38,11 @@ def select_certified_servers(fuel_versions=None, server_name=None, vendor_name=N
 
         servers = result
 
-    if server_name is not None:
-        servers = filter(lambda s: server_name in s.name, servers)
+    if name is not None:
+        servers = filter(lambda s: name in s.name, servers)
 
-    if vendor_name is not None:
-        servers = filter(lambda s: vendor_name in s.vendor, servers)
+    if vendor is not None:
+        servers = filter(lambda s: vendor in s.vendor, servers)
 
     return servers
 
@@ -93,9 +91,10 @@ def select_certified_components(types=None, fuel_versions=None, vendor=None, nam
     return components
 
 
-select_servers("Super")
-select_certified_servers(fuel_versions=['Fuel 5.1', 'Fuel 6.0', 'Fuel 5.0', 'Fuel 4.1', 'Fuel 6.1'],
-                         vendor_name='Super')
-select_components()
-select_certified_components(types=['NIC', 'RAID'], fuel_versions=['Fuel 5.1', 'Fuel 6.0', 'Fuel 5.0', 'Fuel 4.1', 'Fuel 6.1'],
-                            vendor='Intel')
+if __name__ == '__main__':
+    select_servers("Super")
+    select_certified_servers(fuel_versions=['Fuel 5.1', 'Fuel 6.0', 'Fuel 5.0', 'Fuel 4.1', 'Fuel 6.1'],
+                             vendor='Super')
+    select_components()
+    select_certified_components(types=['NIC', 'RAID'], fuel_versions=['Fuel 5.1', 'Fuel 6.0', 'Fuel 5.0', 'Fuel 4.1', 'Fuel 6.1'],
+                                vendor='Intel')

@@ -61,9 +61,11 @@ def list_components(argv):
 
 def main():
     while True:
-        # s = raw_input()
+        s = raw_input()
         #exmaples of commands
-        s = 'list_components --fuel_version Fuel5.1 Fuel6.1'
+        # s = 'list_components --fuel_version Fuel5.1 Fuel6.1'
+        # s = 'list_components --type RAID --fuel_version Fuel5.1 Fuel6.1'
+        # s = 'list_servers --fuel_version Fuel5.1 Fuel6.1'
         cmd, argv = s.split()[0], s.split()[1:]
 
         if cmd == 'list_servers':
@@ -72,6 +74,7 @@ def main():
             list_components(argv=argv)
         else:
             raise Exception('Wrong command')
+
 
 if __name__ == '__main__':
     main()

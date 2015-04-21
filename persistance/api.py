@@ -1,4 +1,5 @@
 # method get server by name or list of all servers
+from datetime import datetime
 from persistance.models import Server, Component, Certification
 from pony.orm.core import select, db_session, left_join, count
 
@@ -100,39 +101,71 @@ def select_certified_components(types=None, fuel_versions=None, vendor=None, nam
     return components
 
 
-@db_session
-def add_server(component_ids, certification_ids, vendor, comments,
-               specification_url, availability):
-    components = select(c for c in Component if c.id in component_ids)
-    certifications = select(c for c in Certification
-                            if c.id in certification_ids)
+def add_server(component_ids=None, certification_ids=None, name="",
+               vendor="", comments="",
+               specification_url=None, availability=None):
+    with db_session:
+        components = None
+        certifications = None
 
-    server = Server(vendor=vendor, comments=comments,
-                    specification_url=specification_url,
-                    availability=availability)
+        if component_ids is not None:
+            components = select(c for c in Component if c.id in component_ids)[:]
 
-    for c in components:
-        server.components.add(c)
+        if certification_ids is not None:
+            certifications = select(c for c in Certification
+                                    if c.id in certification_ids)[:]
 
-    for c in certifications:
-        server.certifications.add(c)
+        server = Server(vendor=vendor, name=name)
+
+        if specification_url is not None:
+            server.specification_url = specification_url
+
+        if availability is not None:
+            server.availability = availability
+
+        if components is not None:
+            for c in components:
+                server.components.add(c)
+
+        if certifications is not None:
+            for c in certifications:
+                server.certifications.add(c)
+
+    return server
 
 
-def add_component(server_ids, name, vendor, comments):
-    servers = select(s for s in Server if s.id in server_ids)
-    component = Component(name=name, vendor=vendor, comments=comments)
+def add_component(server_ids=None, type="", name="", vendor="", comments=""):
+    with db_session:
+        if server_ids is None:
+            servers = None
+        else:
+            servers = select(s for s in Server if s.id in server_ids)[:]
 
-    for s in servers:
-        component.servers.add(s)
+        component = Component(type=type, name=name,
+                              vendor=vendor, comments=comments)
+
+        if servers is not None:
+            for s in servers:
+                component.servers.add(s)
+
+    return component
 
 
-def add_certification(server_id, fuel_version, date, comments):
-    server = Server.get(s for s in Server if s.id == server_id)
-    certification = Certification(fuel_version=fuel_version,
-                                  date=date, comments=comments)
-    # establishing  connection between server and certification
-    certification.server = server
-    server.certifications.add(certification)
+def add_certification(server_id=None, fuel_version="",
+                      date=datetime.now(), comments=None):
+    with db_session:
+        server = Server.get(lambda s: s.id == server_id)
+        certification = Certification(fuel_version=fuel_version,
+                                      date=date)
+
+        if comments is not None:
+            certification.comments = comments
+
+        # establishing  connection between server and certification
+        certification.server = server
+        server.certifications.add(certification)
+
+    return certification.id
 
 
 if __name__ == '__main__':
@@ -147,3 +180,15 @@ if __name__ == '__main__':
                                                'Fuel4.1',
                                                'Fuel6.1'],
                                 vendor='Intel')
+
+    server_id = add_server(component_ids=[2, 6], vendor="IBM",
+                           name="IBM Z-machine",
+                           specification_url="www.ibm.com")
+
+    certification_id = add_certification(server_id=server_id,
+                                         fuel_version='Fuel6.0')
+
+    component_id = add_component(server_ids=[server_id],
+                                 type="NIC",
+                                 name='some cool ibm stuff',
+                                 vendor='IBM')

@@ -34,6 +34,9 @@ with db_session:
     s6 = Server(name="Lenovo RD530", vendor="Lenovo",
                 specification_url="http://shop.lenovo.com/us/en/servers/thinkserver/racks/rd530/#tab-tech_specs")
 
+    s7 = Server(name="Some server which is not certified", vendor="Lenovo",
+                specification_url="http://shop.lenovo.com/us/en/servers/thinkserver/racks/rd530/#tab-tech_specs")
+
     #establishing a connections
     s1.certifications.add(cert1)
     s1.certifications.add(cert2)

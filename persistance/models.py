@@ -15,6 +15,10 @@ class Server(db.Entity):
     specification_url = Optional(str)
     availability = Optional(str)
 
+    def __str__(self):
+        return "id: {0} name: {1} vendor: {2}".\
+            format(self.id, self.name, self.vendor)
+
 
 class Component(db.Entity):
     id = PrimaryKey(int, auto=True)

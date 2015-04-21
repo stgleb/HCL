@@ -15,6 +15,10 @@ with db_session:
     cert3 = Certification(fuel_version="Fuel 5.1", date=datetime.now())
     cert4 = Certification(fuel_version="Fuel 6.1", date=datetime.now())
     cert5 = Certification(fuel_version="Fuel 4.1", date=datetime.now())
+    cert6 = Certification(fuel_version="Fuel 5.1", date=datetime.now())
+    cert7 = Certification(fuel_version="Fuel 6.1", date=datetime.now())
+    cert8 = Certification(fuel_version="Fuel 5.1", date=datetime.now())
+    cert9 = Certification(fuel_version="Fuel 6.0", date=datetime.now())
 
     s1 = Server(name="SuperMicro SuperServer 6027TR-H71RF+", vendor="Supermicro",
                 specification_url="http://www.supermicro.com/products/system/3U/5037/SYS-5037MR-H8TRF.cfm")
@@ -22,6 +26,13 @@ with db_session:
                 specification_url="http://www.supermicro.com/products/system/2U/6027/SYS-6027TR-H71RF_.cfm")
     s3 = Server(name="Dell PowerEdge R630", vendor="Dell",
                 specification_url="http://www.dell.com/rs/business/p/poweredge-r620/pd")
+
+    s4 = Server(name="Cisco UCS-C Series Blade Server", vendor="Cisco")
+
+    s5 = Server(name="Huawei RH2288", vendor="Huawei")
+
+    s6 = Server(name="Lenovo RD530", vendor="Lenovo",
+                specification_url="http://shop.lenovo.com/us/en/servers/thinkserver/racks/rd530/#tab-tech_specs")
 
     #establishing a connections
     s1.certifications.add(cert1)
@@ -34,6 +45,20 @@ with db_session:
 
     cert4.server = s2
     cert5.server = s2
+
+    s3.certifications.add(cert3)
+    cert3.server = s3
+
+    s4.certifications.add(cert6)
+    cert6.server = s4
+
+    s5.certifications.add(cert7)
+    cert7.server = s5
+
+    s6.certifications.add(cert8)
+    s6.certifications.add(cert9)
+    cert8.server = s6
+    cert9 = s6
 
     s1.components.add(c1)
     s1.components.add(c3)

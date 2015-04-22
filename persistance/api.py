@@ -1,6 +1,6 @@
 # method get server by name or list of all servers
 from datetime import datetime
-from persistance.models import Server, Component, Certification
+from persistance.models import Server, Component, Certification, db
 from pony.orm.core import select, db_session, left_join, count
 
 
@@ -166,6 +166,16 @@ def add_certification(server_id=None, fuel_version="",
         server.certifications.add(certification)
 
     return certification.id
+
+
+def delete_server(id):
+    db.execute("DELETE FROM Servers "
+               "WHERE id={0};".format(id))
+
+
+def delete_component(id):
+    db.execute("DELETE FROM Component "
+               "WHERE id={0};".format(id))
 
 
 if __name__ == '__main__':

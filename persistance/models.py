@@ -5,7 +5,7 @@ db = Database("sqlite", "database.sqlite", create_db=True)
 
 
 class Server(db.Entity):
-    _table_ = "Servers"
+    _table_ = "Server"
     id = PrimaryKey(int, auto=True)
     name = Required(str)
     components = Set("Component")

@@ -137,6 +137,15 @@ def add_component(argv):
     print table
 
 
+def delete_server(server_id):
+    # select(s for s in Server if s.id == server_id)
+    pass
+
+
+def delete_component(component_id):
+    pass
+
+
 def main():
     while True:
         s = raw_input()

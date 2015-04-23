@@ -24,8 +24,8 @@ class Component(db.Entity):
     id = PrimaryKey(int, auto=True)
     servers = Set(Server)
     name = Required(str)
-    vendor = Required(str)
-    comments = Required(str)
+    vendor = Optional(str)
+    comments = Optional(str)
     type = Required(str)
     hw_id = Optional(unicode, unique=True)
     driver = Required("Driver")
@@ -34,7 +34,7 @@ class Component(db.Entity):
 class Certification(db.Entity):
     id = PrimaryKey(int, auto=True)
     server = Required(Server)
-    date = Required(datetime)
+    date = Optional(datetime)
     comments = Optional(str)
     fuel_version = Required("FuelVersion")
 

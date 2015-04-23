@@ -8,6 +8,12 @@ with db_session:
     driver2 = Driver(name="bb", version="0.1")
     driver3 = Driver(name="ccc", version="1.0")
 
+    type1 = Type(name="nic")
+    type2 = Type(name="raid")
+    type3 = Type(name="chipset")
+    type4 = Type(name="motherboard")
+    type5 = Type(name="cpu")
+
     c1 = Component(name="Intel C204 PCH", vendor="Intel",
                    type="Chipset", comments="nothing",
                    driver=driver3)

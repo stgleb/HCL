@@ -2,7 +2,7 @@
 from datetime import datetime
 from persistance.decorators import lower_case
 from persistance.models import Server, Component, Certification, db, Driver, FuelVersion, Type
-from pony.orm.core import select, db_session, left_join, count
+from pony.orm.core import select, db_session, left_join, count, get
 
 
 def has_intersection(set_1, set2):
@@ -111,15 +111,51 @@ def select_certified_components(types=None, fuel_versions=None,
 
 
 @lower_case
-def add_server(component_ids=None, certification_ids=None,
+def select_driver(name=None, version=None):
+    with db_session:
+        drivers = select(d for d in Driver)[:]
+
+        if name is not None:
+            drivers = filter(lambda d: d.name == name,
+                             drivers)
+
+        if version is not None:
+            drivers = filter(lambda d: d.version == version,
+                             drivers)
+
+    return drivers
+
+
+@lower_case
+def select_certification(server_name=None, date=None, fuel_versions=None):
+    with db_session:
+        certifications = select(c for c in Certification)[:]
+
+        if server_name is not None:
+            certifications = filter(lambda c: c.server.name == server_name,
+                                    certifications)
+
+        if date is not None:
+            certifications = filter(lambda c: c.date == date,
+                                    certifications)
+
+        if fuel_versions is not None:
+            certifications = filter(lambda c: c.fuel_version.name in fuel_versions,
+                                    certifications)
+
+    return certifications
+
+
+@lower_case
+def add_server(component_names=None, certification_ids=None,
                name="", vendor="", comments="",
                specification_url=None, availability=None):
     with db_session:
         components = None
         certifications = None
 
-        if component_ids is not None:
-            components = select(c for c in Component if c.id in component_ids)[:]
+        if component_names is not None:
+            components = select(c for c in Component if c.name in component_names)[:]
 
         if certification_ids is not None:
             certifications = select(c for c in Certification
@@ -145,48 +181,47 @@ def add_server(component_ids=None, certification_ids=None,
 
 
 @lower_case
-def add_component(server_ids=None, type="", name="", vendor="",
-                  comments="", hw_id="", driver_name=None):
+def add_component(servers=None, type="", name="", vendor="",
+                  comments="", hw_id="", driver=None):
     with db_session:
         if select(t for t in Type
                   if t.name == type).count() == 0:
             raise Exception('Unknown component type')
 
-        if driver_name is None:
+        if driver is None:
             raise Exception('Driver is not specified')
         else:
-            driver = select(d for d in Driver if d.name == driver_name)
+            driver = get(d for d in Driver if d.name == driver)
 
-        if server_ids is None:
+        if servers is None:
             servers = None
         else:
-            servers = select(s for s in Server if s.id in server_ids)[:]
+            servers = select(s for s in Server if s.id in servers)[:]
 
-        component = Component(type=type, name=name,
-                              vendor=vendor, comments=comments)
-
-        if servers is not None:
-            for s in servers:
-                component.servers.add(s)
+        component = Component(type=type, name=name, servers=servers,
+                              vendor=vendor, comments=comments, driver=driver, hw_id=hw_id)
 
     return component
 
 
 @lower_case
-def add_certification(server_name=None, fuel_version_name=None,
+def add_certification(server=None, fuel_version=None,
                       date=datetime.now(), comments=None):
     with db_session:
-        if fuel_version_name is None:
+        if fuel_version is None:
             raise Exception('Fuel version is not specified')
         else:
-            fuel_version = select(fv for fv in FuelVersion
-                                  if fuel_version_name == fv.name)
-        if server_name is None:
-            raise Exception('Specify server name')
-        else:
-            server = Server.get(lambda s: s.name == server_name)
+            fuel_version = FuelVersion.get(lambda fv: fuel_version == fv.name)
 
-        certification = Certification(fuel_version=fuel_version,
+        if server is None:
+            raise Exception('Specify server name')
+
+        server = Server.get(lambda s: s.name == server)
+
+        if server is None:
+            raise Exception('No such server in database')
+
+        certification = Certification(server=server, fuel_version=fuel_version,
                                       date=date)
 
         if comments is not None:
@@ -213,16 +248,16 @@ def add_driver(name, version):
 
 
 @lower_case
-def add_driver_to_fuel(fuel_version_name, name, version):
+def add_driver_to_fuel(fuel_version, name, version):
     with db_session:
         if select(d for d in Driver
                   if d.name == name and
                   d.version == version).count() > 0:
             raise Exception('Driver already exists')
 
-        if FuelVersion.get(fuel_version_name) is not None:
-            fuel_version = FuelVersion.get(fuel_version_name)
-        else:
+        fuel_version = get(fv for fv in FuelVersion if fv.name == fuel_version)
+
+        if fuel_version is None:
             raise Exception('Unknown Fuel version')
 
         driver = Driver(fuel_version=fuel_version,
@@ -236,7 +271,7 @@ def add_fuel_version(name=None, driver_names=None):
     with db_session:
         if driver_names is not None:
             drivers = select(d for d in Driver
-                             if d.name in driver_names)
+                             if d.name in driver_names)[:]
 
         fuel_version = FuelVersion(name, drivers=drivers)
 
@@ -252,22 +287,13 @@ def add_type(name):
 
 
 @lower_case
-def update_server(id, component_names=None, certification_ids=None,
-               name=None, vendor=None, comments=None,
-               specification_url=None, availability=None):
-    server = Server.get(id)
-
-    if certification_ids is not None:
-        certifications = select(c for c in Certification
-                                if c in certification_ids)
-        server.certifications.clear()
-
-        for c in certifications:
-            server.certifications.add(c)
-
+@db_session
+def update_server(components=None, name=None, vendor=None,
+                  comments=None, specification_url=None, availability=None):
+    server = Server.get(lambda s: s.name == name)
 
     if name is not None:
-        server.name = name
+        raise Exception('Server name is not specified')
 
     if vendor is not None:
         server.vendor = None
@@ -282,20 +308,23 @@ def update_server(id, component_names=None, certification_ids=None,
     if availability is not None:
         server.availability = availability
 
-    if component_names is not None:
-        components = (c for c in Component if c.name in component_names)
+    if components is not None:
+        cmp = select(c for c in Component if c.name in components)[:]
 
-        for c in components:
+        for c in cmp:
             server.components.add(c)
+            c.servers.add(server)
+
+    return server
 
 
 @lower_case
-def update_component(id, server_names=None, type=None, name=None, vendor=None,
-                  comments=None, hw_id=None, driver_name=None):
-    component = Component.get(id)
+def update_component(servers=None, type=None, name=None, vendor=None,
+                     comments=None, hw_id=None, driver=None):
+    component = get(c for c in Component if c.name == name)
 
-    if server_names:
-        servers = select(s for s in Server if s.name in server_names)
+    if servers:
+        servers = select(s for s in Server if s.name in servers)[:]
         component.servers.clear()
 
         for s in servers:
@@ -316,39 +345,70 @@ def update_component(id, server_names=None, type=None, name=None, vendor=None,
     if hw_id is not None:
         component.hw_id = hw_id
 
-    if driver_name is not None:
-        driver = Driver.get(driver_name)
+    if driver is not None:
+        driver = Driver.get(lambda d: d.name == driver)
 
         if driver is not None:
             component.driver = driver
 
-
-def delete_server(name):
-    db.execute("DELETE FROM Servers "
-               "WHERE name={0};".format(name))
+    return component
 
 
-def delete_component(name, hw_id):
-    db.execute("DELETE FROM Component "
-               "WHERE name={0};".format(name))
+@lower_case
+def delete_server(name, fuel_versions):
+    if fuel_versions is None:
+        db.execute("DELETE FROM Server "
+                   "WHERE name='{0}';".format(name))
+
+        return "Request for deleting server {} " \
+               "has been accepted"
+    else:
+        return delete_server_from_certification(name, fuel_versions)
 
 
-def delete_server_from_certification(name, fuel_versions_ids):
+@lower_case
+def delete_server_from_certification(name, fuel_versions):
     certifications = select(certification
                             for server in Server
                             for certification in Certification
                             if certification.fuel_version.name in
-                            fuel_versions_ids and
+                            fuel_versions and
                             server.name == name)[:]
 
     with db_session:
         for c in certifications:
              db.execute("DELETE FROM Certification "
-                   "WHERE id={0};".format(c.id))
+                   "WHERE id='{0}';".format(c.id))
+
+
+@lower_case
+def delete_component(name=None, hw_id=None):
+    if name is not None:
+        cmp = select(c for c in Component if c.name == name)[:]
+    else:
+        raise Exception('Specify component name')
+
+    if hw_id is not None:
+        components = filter(lambda c: c.hw_id == hw_id,
+                            cmp)
+    else:
+        components = cmp
+
+    if len(components) == 0:
+        return "Nothing to delete"
+
+    if len(components[0].servers) > 0:
+        return "Cannot delete component that is used in servers"
+    else:
+        db.execute("DELETE FROM Component "
+               "WHERE name='{0}';".format(components[0].name))
+        return "Request for deleting component {0} " \
+               "has been accepted"
 
 
 if __name__ == '__main__':
     # select_servers("Super")
+
     select_certified_servers(fuel_versions=['Fuel5.0', 'Fuel6.0'],
                              vendor='Super')
     select_components()
@@ -364,10 +424,10 @@ if __name__ == '__main__':
                            name="IBM Z-machine",
                            specification_url="www.ibm.com")
 
-    certification_id = add_certification(server_name=server_id,
+    certification_id = add_certification(servers=server_id,
                                          fuel_version='Fuel6.0')
 
-    component_id = add_component(server_ids=[server_id],
+    component_id = add_component(servers=[server_id],
                                  type="NIC",
                                  name='some cool ibm stuff',
                                  vendor='IBM')

@@ -377,25 +377,29 @@ def main():
         # s = 'server list --fuel_version Fuel5.1 Fuel6.1'
         # s = "server add --name 'My_server' --vendor 'Some_vendor'"
         # s = "component add --name 'aa' --vendor 'bb' --type 'NIC' --server_ids 1"
-        array = parse_string(s)
-        object_type, command= array[0], array[1]
+        try:
+            array = parse_string(s)
+            object_type, command = array[0], array[1]
 
-        if len(array) > 2:
-            argv = array[2:]
-        else:
-            argv = []
+            if len(array) > 2:
+                argv = array[2:]
+            else:
+                argv = []
 
-        if object_type == 'server':
-            dispatch_servers(command=command, argv=argv)
-        elif object_type == 'component':
-            dispatch_components(command=command, argv=argv)
-        elif object_type == 'driver':
-            dispatch_drivers(command=command, argv=argv)
-        elif object_type == 'certification':
-            dispatch_certifications(command=command, argv=argv)
-        else:
-            raise Exception('Wrong command')
-
+            if object_type == 'server':
+                dispatch_servers(command=command, argv=argv)
+            elif object_type == 'component':
+                dispatch_components(command=command, argv=argv)
+            elif object_type == 'driver':
+                dispatch_drivers(command=command, argv=argv)
+            elif object_type == 'certification':
+                dispatch_certifications(command=command, argv=argv)
+            else:
+                raise Exception('Wrong command')
+        except Exception:
+            pass
+        finally:
+            pass
 
 if __name__ == '__main__':
     main()

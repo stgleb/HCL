@@ -47,11 +47,11 @@ class FuelVersion(db.Entity):
 
 
 class Driver(db.Entity):
-    id = PrimaryKey(int, auto=True)
     fuel_versions = Set(FuelVersion)
     version = Required(str)
     name = Required(str, unique=True)
     components = Set(Component)
+    composite_key(name, version)
 
 
 class Type(db.Entity):

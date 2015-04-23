@@ -7,11 +7,11 @@ db = Database("sqlite", "database.sqlite", create_db=True)
 class Server(db.Entity):
     _table_ = "Server"
     id = PrimaryKey(int, auto=True)
-    name = Required(str)
     components = Set("Component")
     certifications = Set("Certification")
     vendor = Required(str)
     comments = Optional(str)
+    name = Required(str, unique=True)
     specification_url = Optional(str)
     availability = Optional(str)
 
@@ -25,16 +25,38 @@ class Component(db.Entity):
     servers = Set(Server)
     name = Required(str)
     vendor = Required(str)
-    comments = Optional(str)
+    comments = Required(str)
     type = Required(str)
+    hw_id = Optional(unicode, unique=True)
+    driver = Required("Driver")
 
 
 class Certification(db.Entity):
     id = PrimaryKey(int, auto=True)
-    server = Optional(Server)
-    fuel_version = Required(str)
+    server = Required(Server)
     date = Required(datetime)
     comments = Optional(str)
+    fuel_version = Required("FuelVersion")
+
+
+class FuelVersion(db.Entity):
+    id = PrimaryKey(int, auto=True)
+    certifications = Set(Certification)
+    name = Required(str, unique=True)
+    drivers = Set("Driver")
+
+
+class Driver(db.Entity):
+    id = PrimaryKey(int, auto=True)
+    fuel_versions = Set(FuelVersion)
+    version = Required(str)
+    name = Required(str, unique=True)
+    components = Set(Component)
+
+
+class Type(db.Entity):
+    id = PrimaryKey(int, auto=True)
+    name = Required(unicode)
 
 
 class HardwareId(db.Entity):

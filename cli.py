@@ -18,6 +18,32 @@ def dispatch_servers(command, argv):
         raise Exception('unknown server command')
 
 
+def parse_string(s):
+    result = []
+    quoted = False
+    cur = ""
+
+    for c in s:
+        cur += c
+
+        if c in {'"', "'"} and quoted == True:
+            if cur != '':
+                result.append(cur[:len(cur) - 1])
+            cur = ""
+            quoted = False
+        elif c in {'"', "'"} and quoted == False:
+            cur = cur[1:]
+            quoted = True
+        elif quoted == False and c == ' ':
+            if cur != ' ':
+                result.append(cur[:len(cur) - 1])
+            cur = ""
+
+    if cur != '':
+        result.append(cur)
+    return result
+
+
 def dispatch_components(command, argv):
     if command == 'list':
         list_components(argv)
@@ -43,7 +69,7 @@ def get_parser():
 
 @db_session
 def list_servers(argv):
-    table = prettytable.PrettyTable(["id", "name", "vendor", "Fuel versions",
+    table = prettytable.PrettyTable(["name", "vendor", "Fuel versions",
                                 "comments", "specification_url", "availability"])
     parser = get_parser()
     arg_obj = parser.parse_args(argv)
@@ -53,8 +79,8 @@ def list_servers(argv):
 
 
     for s in servers:
-       fuel_versions = ' '.join([c.fuel_version for c in s.certifications])
-       table.add_row([s.id, s.name, s.vendor, fuel_versions, s.comments, s.specification_url, s.availability])
+       fuel_versions = ' '.join([c.fuel_version.name for c in s.certifications])
+       table.add_row([s.name, s.vendor, fuel_versions, s.comments, s.specification_url, s.availability])
 
     print table
 
@@ -102,8 +128,7 @@ def add_server(argv):
     with db_session:
         s = api.add_server(**args)
 
-    fuel_versions = ' '.join([c.fuel_version for c in s.certifications])
-    table.add_row([s.id, s.name, s.vendor, fuel_versions, s.comments, s.specification_url, s.availability])
+    table.add_row([s.id, s.name, s.vendor, s.comments, s.specification_url, s.availability])
     print table
 
 
@@ -156,8 +181,13 @@ def main():
         # s = 'server list --fuel_version Fuel5.1 Fuel6.1'
         # s = "server add --name 'My_server' --vendor 'Some_vendor'"
         # s = "component add --name 'aa' --vendor 'bb' --type 'NIC' --server_ids 1"
-        array = s.split()
-        object_type, command, argv = array[0], array[1], s.split()[2:]
+        array = parse_string(s)
+        object_type, command= array[0], array[1]
+
+        if len(array) > 2:
+            argv = array[2:]
+        else:
+            argv = []
 
         if object_type == 'server':
             dispatch_servers(command=command, argv=argv)

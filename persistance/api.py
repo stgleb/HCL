@@ -20,6 +20,7 @@ def check_type(type_name):
 
     return True
 
+
 @db_session
 def select_servers(name=None):
     servers = select(s for s in Server)[:]

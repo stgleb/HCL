@@ -1,3 +1,4 @@
+import sys
 from persistance import api
 from persistance.api import select_certified_servers, select_certified_components
 from pony.orm.core import db_session
@@ -98,6 +99,13 @@ def list_servers(argv):
     table = prettytable.PrettyTable(["name", "vendor", "Fuel versions",  "components",
                                 "comments", "specification_url", "availability"])
     parser = get_parser()
+
+    if len(argv) == 1 and (argv[0] == '-h'
+       or argv[0] == '--help'
+       or argv[0] == 'help'):
+        parser.print_help()
+        return
+
     arg_obj = parser.parse_args(argv)
     args = vars(arg_obj)
 
@@ -119,13 +127,19 @@ def list_components(argv):
     table = prettytable.PrettyTable(["name", "vendor", "type", "Fuel versions",
                                 "comments"])
 
-    parser = argparse.ArgumentParser(description='Command line parser')
+    parser = argparse.ArgumentParser(description='List components')
     parser.add_argument('--name', type=str, help='name')
     parser.add_argument('--vendor', type=str, help='vendor name')
     parser.add_argument(
         "--fuel_versions", type=str, nargs='+', help='Fuel build versions list')
     parser.add_argument(
         "--types", type=str, nargs='+', help='Component type list')
+
+    if len(argv) == 1 and (argv[0] == '-h'
+       or argv[0] == '--help'
+       or argv[0] == 'help'):
+        parser.print_help()
+        return
 
     arg_obj = parser.parse_args(argv)
     args = vars(arg_obj)
@@ -150,11 +164,17 @@ def list_components(argv):
 def list_certifications(argv):
     table = prettytable.PrettyTable(["server name", "date", "fuel_version"])
 
-    parser = argparse.ArgumentParser(description='Command line parser')
+    parser = argparse.ArgumentParser(description='list certifications')
     parser.add_argument('--server_name', type=str, help='name')
     parser.add_argument('--date', type=str, help='vendor name')
     parser.add_argument(
         "--fuel_versions", type=str, nargs='+', help='Fuel build versions list')
+
+    if len(argv) == 1 and (argv[0] == '-h'
+       or argv[0] == '--help'
+       or argv[0] == 'help'):
+        parser.print_help()
+        return
 
     arg_obj = parser.parse_args(argv)
     args = vars(arg_obj)
@@ -172,9 +192,15 @@ def list_certifications(argv):
 def list_drivers(argv):
     table = prettytable.PrettyTable(["name", "version"])
 
-    parser = argparse.ArgumentParser(description='Command line parser')
+    parser = argparse.ArgumentParser(description='List drivers')
     parser.add_argument('--name', type=str, help='name')
     parser.add_argument('--version', type=str, help='driver version')
+
+    if len(argv) == 1 and (argv[0] == '-h'
+       or argv[0] == '--help'
+       or argv[0] == 'help'):
+        parser.print_help()
+        return
 
     arg_obj = parser.parse_args(argv)
     args = vars(arg_obj)
@@ -189,9 +215,15 @@ def list_drivers(argv):
 def add_driver(argv):
     table = prettytable.PrettyTable(["name", "version"])
 
-    parser = argparse.ArgumentParser(description='Command line parser')
+    parser = argparse.ArgumentParser(description='adding driver')
     parser.add_argument('--name', type=str, help='name', required=True)
     parser.add_argument('--version', type=str, help='version')
+
+    if len(argv) == 1 and (argv[0] == '-h'
+       or argv[0] == '--help'
+       or argv[0] == 'help'):
+        parser.print_help()
+        return
 
     arg_obj = parser.parse_args(argv)
     args = vars(arg_obj)
@@ -213,6 +245,12 @@ def add_server(argv):
     parser.add_argument('--name', type=str, help='name', required=True)
     parser.add_argument('--vendor', type=str, help='vendor name', required=True)
     parser.add_argument('--component_names', type=int, nargs='+', help='component names')
+
+    if len(argv) == 1 and (argv[0] == '-h'
+       or argv[0] == '--help'
+       or argv[0] == 'help'):
+        parser.print_help()
+        return
 
     arg_obj = parser.parse_args(argv)
     args = vars(arg_obj)
@@ -238,6 +276,12 @@ def add_component(argv):
     parser.add_argument('--type', type=str, help='type', required=True)
     parser.add_argument('--servers', type=str, nargs='+', help='server name')
     parser.add_argument('--driver', type=str, help='driver name')
+
+    if len(argv) == 1 and (argv[0] == '-h'
+       or argv[0] == '--help'
+       or argv[0] == 'help'):
+        parser.print_help()
+        return
 
     arg_obj = parser.parse_args(argv)
     args = vars(arg_obj)
@@ -270,6 +314,12 @@ def add_certification(argv):
     parser.add_argument('--server', type=str, help='server name', required=True)
     parser.add_argument('--comments', type=str, help='comments')
 
+    if len(argv) == 1 and (argv[0] == '-h'
+       or argv[0] == '--help'
+       or argv[0] == 'help'):
+        parser.print_help()
+        return
+
     arg_obj = parser.parse_args(argv)
     args = vars(arg_obj)
 
@@ -292,6 +342,12 @@ def update_server(argv):
     parser.add_argument('--components', type=str, nargs='+', help='component name')
     parser.add_argument('--availability', type=str, help='availability')
     parser.add_argument('--specification_url', type=str, help='specification url')
+
+    if len(argv) == 1 and (argv[0] == '-h'
+       or argv[0] == '--help'
+       or argv[0] == 'help'):
+        parser.print_help()
+        return
 
     arg_obj = parser.parse_args(argv)
     args = vars(arg_obj)
@@ -319,6 +375,12 @@ def update_component(argv):
     parser.add_argument('--servers', type=str, nargs='+', help='server name')
     parser.add_argument('--driver', type=str, help='driver name')
 
+    if len(argv) == 1 and (argv[0] == '-h'
+       or argv[0] == '--help'
+       or argv[0] == 'help'):
+        parser.print_help()
+        return
+
     arg_obj = parser.parse_args(argv)
     args = vars(arg_obj)
 
@@ -344,6 +406,12 @@ def delete_server(argv):
     parser.add_argument('--name', type=str, help='name', required=True)
     parser.add_argument('--fuel_versions', type=str, help='fuel versions')
 
+    if len(argv) == 1 and (argv[0] == '-h'
+       or argv[0] == '--help'
+       or argv[0] == 'help'):
+        parser.print_help()
+        return
+
     arg_obj = parser.parse_args(argv)
     args = vars(arg_obj)
 
@@ -367,9 +435,27 @@ def delete_component(argv):
         print api.delete_component(**args)
 
 
+def help_user():
+    print 'Command line util for manipulating Hardware compatibility list \n' \
+          'database' \
+          'There are 4 entities you are able to manipulate\n' \
+          ' - server\n' \
+          ' - component\n' \
+          ' - driver\n' \
+          ' -certification\n' \
+          '' \
+          'Each of them supports 4 commands: add, list, delete, update\n' \
+          'type <entity_type> <command> --help\n' \
+          'to see detailed explanation of arguments\n'
+
+
 def main():
     while True:
+        sys.stdout.write(">>>")
         s = raw_input()
+
+        if s == 'exit':
+            return
         #exmaples of commands
         #servers list
         # s = 'components list --fuel_version Fuel5.1 Fuel6.1'
@@ -379,7 +465,11 @@ def main():
         # s = "component add --name 'aa' --vendor 'bb' --type 'NIC' --server_ids 1"
         try:
             array = parse_string(s)
-            object_type, command = array[0], array[1]
+
+            object_type = array[0]
+
+            if len(array) >= 2:
+                command = array[1]
 
             if len(array) > 2:
                 argv = array[2:]
@@ -394,8 +484,10 @@ def main():
                 dispatch_drivers(command=command, argv=argv)
             elif object_type == 'certification':
                 dispatch_certifications(command=command, argv=argv)
+            elif object_type == 'help':
+                help_user()
             else:
-                raise Exception('Wrong command')
+                print 'Wrong command, pleasy type command help'
         except Exception:
             pass
         finally:

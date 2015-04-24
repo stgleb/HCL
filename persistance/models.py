@@ -70,5 +70,5 @@ class Wishlist(db.Entity):
     server_name = Required(unicode)
 
 
-sql_debug(True)
+# sql_debug(True)
 db.generate_mapping(create_tables=True)

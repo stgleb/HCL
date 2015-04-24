@@ -1,7 +1,8 @@
 # method get server by name or list of all servers
 from datetime import datetime
-from persistance.decorators import lower_case
-from persistance.models import Server, Component, Certification, db, Driver, FuelVersion, Type
+
+from decorators import lower_case
+from models import Server, Component, Certification, db, Driver, FuelVersion, Type
 from pony.orm.core import select, db_session, left_join, count, get
 
 
@@ -236,6 +237,7 @@ def add_certification(server=None, fuel_version=None,
 
 
 @lower_case
+@db_session
 def add_driver(name, version):
     with db_session:
         if select(d for d in Driver
@@ -249,6 +251,7 @@ def add_driver(name, version):
 
 
 @lower_case
+@db_session
 def add_driver_to_fuel(fuel_version, name, version):
     with db_session:
         if select(d for d in Driver
@@ -268,6 +271,7 @@ def add_driver_to_fuel(fuel_version, name, version):
 
 
 @lower_case
+@db_session
 def add_fuel_version(name=None, driver_names=None):
     with db_session:
         if driver_names is not None:
@@ -280,6 +284,7 @@ def add_fuel_version(name=None, driver_names=None):
 
 
 @lower_case
+@db_session
 def add_type(name):
     with db_session:
         type = Type(name=name)
@@ -320,6 +325,7 @@ def update_server(components=None, name=None, vendor=None,
 
 
 @lower_case
+@db_session
 def update_component(servers=None, type=None, name=None, vendor=None,
                      comments=None, hw_id=None, driver=None):
     component = get(c for c in Component if c.name == name)
@@ -356,6 +362,7 @@ def update_component(servers=None, type=None, name=None, vendor=None,
 
 
 @lower_case
+@db_session
 def delete_server(name, fuel_versions):
     if fuel_versions is None:
         db.execute("DELETE FROM Server "

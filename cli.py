@@ -1,9 +1,10 @@
 import sys
-from persistance import api
-from persistance.api import select_certified_servers, select_certified_components
+import argparse
+
+import api
+from api import select_certified_servers, select_certified_components
 from pony.orm.core import db_session
 import prettytable
-import argparse
 
 
 def dispatch_servers(command, argv):

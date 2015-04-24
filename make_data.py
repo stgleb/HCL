@@ -1,5 +1,6 @@
-from models import *
 from datetime import datetime
+
+from models import *
 
 
 with db_session:

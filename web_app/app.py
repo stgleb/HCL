@@ -1,8 +1,9 @@
 import json
+import pickle
 import api
 from flask import Flask, request, jsonify, Response
 from pony.orm import db_session
-from web_app.dto import ServerDTO, ComponentDTO
+from web_app.dto import ServerDTO, ComponentDTO, DriverDTO
 
 app = Flask(__name__)
 
@@ -26,7 +27,8 @@ def list_servers():
         dto.fuel_versions = fuel_versions
         dtos.append(dto)
 
-    resp = Response(response=json.dumps(dtos),
+    resp = Response(response=json.dumps(
+                    [dto.__dict__ for dto in dtos]),
                     status=200,
                     mimetype='application/json')
     return resp
@@ -46,7 +48,10 @@ def add_server():
     dto.components = components
     dto.fuel_versions = fuel_versions
 
-    return jsonify(dto)
+    resp = Response(response=json.dumps(dto.__dict__),
+                    status=200,
+                    mimetype='application/json')
+    return resp
 
 
 @app.route('/api/server', methods=['PUT'])
@@ -83,7 +88,16 @@ def list_drivers():
         d[key] = value
 
     drivers = api.select_driver(**d)
-    return jsonify(drivers)
+    dtos = []
+
+    for d in drivers:
+        dtos.append(DriverDTO(d))
+
+    resp = Response(response=json.dumps(
+                    [dto.__dict__ for dto in dtos]),
+                    status=200,
+                    mimetype='application/json')
+    return resp
 
 
 @app.route('/api/driver', methods=['POST'])
@@ -102,6 +116,7 @@ def add_fuel_version():
 
 
 @app.route('/api/search/component', methods=['POST'])
+@db_session
 def list_components():
     d = {}
 
@@ -124,7 +139,11 @@ def list_components():
         dto.fuel_versions = fuel_versions
         dtos.append(dto)
 
-    return jsonify(dtos)
+    resp = Response(response=json.dumps(
+                    [dto.__dict__ for dto in dtos]),
+                    status=200,
+                    mimetype='application/json')
+    return resp
 
 
 @app.route('/api/component', methods=['POST'])

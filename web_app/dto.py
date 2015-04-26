@@ -19,7 +19,7 @@ class ComponentDTO():
     def __init__(self, component):
         self.name = component.name
         self.vendor = component.vendor
-        self.type = component.type.name
+        self.type = component.type
         self.hw_id = component.hw_id
         self.driver = component.driver.name
 

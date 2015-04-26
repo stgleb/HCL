@@ -1,40 +1,89 @@
+import json
 import api
-from flask import Flask, request
+from flask import Flask, request, jsonify, Response
+from pony.orm import db_session
+from web_app.dto import ServerDTO, ComponentDTO
 
 app = Flask(__name__)
 
 
 @app.route('/api/search/server', methods=['POST'])
+@db_session
 def list_servers():
-    print request.form
+    d = {}
+
+    for key, value in request.form.items():
+        d[key] = value
+
+    servers = api.select_servers(**d)
+    dtos = []
+
+    for s in servers:
+        dto = ServerDTO(s)
+        components = ', '.join([c.name for c in s.components])
+        fuel_versions = ' '.join([c.fuel_version.name for c in s.certifications])
+        dto.components = components
+        dto.fuel_versions = fuel_versions
+        dtos.append(dto)
+
+    resp = Response(response=json.dumps(dtos),
+                    status=200,
+                    mimetype='application/json')
+    return resp
 
 
 @app.route('/api/server', methods=['POST'])
 def add_server():
-    print request.form.items()
-    return ""
+    d = {}
+    for key, value in request.form.items():
+        d[key] = value
+
+    s = api.add_server(**d)
+
+    dto = ServerDTO(s)
+    components = ', '.join([c.name for c in s.components])
+    fuel_versions = ' '.join([c.fuel_version.name for c in s.certifications])
+    dto.components = components
+    dto.fuel_versions = fuel_versions
+
+    return jsonify(dto)
 
 
 @app.route('/api/server', methods=['PUT'])
 def update_server():
-    pass
+    d = {}
+    for key, value in request.form.items():
+        d[key] = value
+
+    s = api.update_server(**d)
+
+    dto = ServerDTO(s)
+    components = ', '.join([c.name for c in s.components])
+    fuel_versions = ' '.join([c.fuel_version.name for c in s.certifications])
+    dto.components = components
+    dto.fuel_versions = fuel_versions
+
+    return ""
 
 
 @app.route('/api/server', methods=['DELETE'])
 def delete_server():
-    pass
+    d = {}
+    for key, value in request.form.items():
+        d[key] = value
+
+    return api.delete_server(**d)
 
 
 @app.route('/api/search/driver', methods=['POST'])
 def list_drivers():
-
     d = {}
 
     for key, value in request.form.items():
         d[key] = value
 
     drivers = api.select_driver(**d)
-    print drivers
+    return jsonify(drivers)
 
 
 @app.route('/api/driver', methods=['POST'])
@@ -54,7 +103,28 @@ def add_fuel_version():
 
 @app.route('/api/search/component', methods=['POST'])
 def list_components():
-    pass
+    d = {}
+
+    for key, value in request.form.items():
+        d[key] = value
+
+    components = api.select_components(**d)
+    dtos = []
+
+    for c in components:
+        dto = ComponentDTO(c)
+        fuel_versions_set = set()
+        fuel_versions = ''
+
+        for server in c.servers:
+            [fuel_versions_set.add(x.fuel_version.name) for x in server.certifications]
+
+        for fv in fuel_versions_set:
+            fuel_versions += fv + ' '
+        dto.fuel_versions = fuel_versions
+        dtos.append(dto)
+
+    return jsonify(dtos)
 
 
 @app.route('/api/component', methods=['POST'])

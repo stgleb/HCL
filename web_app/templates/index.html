@@ -1,9 +1,12 @@
 <!DOCTYPE html>
     <head>
-    <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <link rel="stylesheet" type="text/css" href="layout.css">
-    <title>Page Title</title>
-    <meta name="description" content="Write some words to describe your html page">
+        <meta http-equiv="content-type" content="text/html; charset=utf-8">
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css"/>
+        <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+        <script type=text/javascript src="{{url_for('static', filename='script.js') }}"></script>
+        <title>Page Title</title>
+        <meta name="description" content="Write some words to describe your html page">
     </head>
     <body>
         <div class="blended_grid">
@@ -12,15 +15,9 @@
                 </div>
                 <div class="pageLeftMenu">
                     <div>
-                        <input type="checkbox" name="option2" value="a2">Fuel 4.1<br>
-                        <br>
-                        <input type="checkbox" name="option3" value="a3">Fuel 5.0<br>
-                        <br>
-                        <input type="checkbox" name="option4" value="a4">Fuel 5.1<br>
-                        <br>
-                        <input type="checkbox" name="option5" value="a5">Fuel 6.0<br>
-                        <br>
-                        <input type="checkbox" name="option5" value="a5">Fuel 6.1<br>
+                        {% for fv in fuel_versions %}
+                            <input type="checkbox" name="option2" value="a2">{{ fv.name }}<br>
+                        {% endfor %}
                         <br>
                         <h2>Object type</h2>
                         <br>
@@ -28,6 +25,29 @@
                         <br>
                         <input type="radio" name="group1" value="component"> Component<br>
                         <br>
+                    </div>
+                    <div id="component_params" style="display: none;">
+                            <label>Component type</label><br>
+                            <br>
+                            <select name="component_type">
+                              <option selected="selected">All types</option>
+                                  {% for type in types %}
+                                       <option>{{ type.name }}</option>
+                                  {% endfor %}
+                            </select>
+                            <br>
+                            <br>
+                            <label>Component name</label>
+                            <br>
+                            <input type="text"/>
+                            <br><br>
+                            <label>Server</label><br>
+                            <br>
+                            <select name="server">
+                                 {% for server in servers %}
+                                      <option>{{ server.name }}</option>
+                                 {% endfor %}
+                            </select>
                     </div>
                 </div>
                 <div class="pageContent">

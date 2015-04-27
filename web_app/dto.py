@@ -52,12 +52,19 @@ class FuelVersionDTO():
 
 class CertificationDTO():
     server = str
-    date = datetime.date
+    date = str
     comments = str
     fuel_version = str
 
     def __init__(self, certification):
-        self.date = certification.date
+        self.date = str(certification.date)
         self.server = certification.server.name
         self.comments = certification.comments
         self.fuel_version = certification.fuel_version.name
+
+
+class TypeDTO():
+    name = str
+
+    def __init__(self, type):
+        self.name = type.name

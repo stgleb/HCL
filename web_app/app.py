@@ -1,9 +1,9 @@
 import traceback
 import json
 import api
-from flask import Flask, request, jsonify, Response
+from flask import Flask, request, jsonify, Response, render_template
 from pony.orm import db_session
-from web_app.dto import ServerDTO, ComponentDTO, DriverDTO, FuelVersionDTO, CertificationDTO
+from web_app.dto import ServerDTO, ComponentDTO, DriverDTO, FuelVersionDTO, CertificationDTO, TypeDTO
 
 app = Flask(__name__)
 
@@ -164,6 +164,42 @@ def add_fuel_version():
     return resp
 
 
+@db_session
+def list_fuel_versions():
+    versions = api.select_fuel_versions()
+    dto_list = []
+
+    for fv in versions:
+        dto = FuelVersionDTO(fv)
+        dto_list.append(dto)
+
+    return dto_list
+
+
+@db_session
+def list_all_servers():
+    servers = api.select_servers()
+    dto_list = []
+
+    for s in servers:
+        dto = ServerDTO(s)
+        dto_list.append(dto)
+
+    return dto_list
+
+
+@db_session
+def list_all_types():
+    types = api.select_types()
+    dto_list = []
+
+    for t in types:
+        dto = TypeDTO(t)
+        dto_list.append(dto)
+
+    return dto_list
+
+
 @app.route('/api/search/component', methods=['POST'])
 @db_session
 def list_components():
@@ -234,7 +270,7 @@ def update_component():
     return resp
 
 
-@app.route('/api/fuel/driver', methods=['delete'])
+@app.route('/api/component', methods=['DELETE'])
 @db_session
 def delete_component():
     d = json.loads(request.data)
@@ -257,6 +293,19 @@ def add_certification():
                     status=201,
                     mimetype='application/json')
     return resp
+
+
+@app.route('/', methods=['GET'])
+@db_session
+def index():
+    fuel_versions = list_fuel_versions()
+    types = list_all_types()
+    servers = list_all_servers()
+
+    return render_template("index.html", fuel_versions=fuel_versions,
+                           types=types,
+                           servers=servers)
+
 
 if __name__ == '__main__':
     app.run()

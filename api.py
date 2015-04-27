@@ -149,6 +149,27 @@ def select_certification(server_name=None, date=None, fuel_versions=None):
 
 
 @lower_case
+@db_session
+def select_fuel_versions(name=None):
+    fuel_versions = select(fv for fv in FuelVersion)[:]
+
+    if name is not None:
+        fuel_versions = filter(lambda fv: fv.name == name, fuel_versions)
+
+    return fuel_versions
+
+
+@lower_case
+@db_session
+def select_types(name=None):
+    types = select(type for type in Type)[:]
+
+    if name is not None:
+        types = filter(lambda type: type.name, types)
+
+    return types
+
+@lower_case
 def add_server(component_names=None, certification_ids=None,
                name="", vendor="", comments="",
                specification_url=None, availability=None):
@@ -195,13 +216,14 @@ def add_component(servers=None, type="", name="", vendor="",
         else:
             driver = get(d for d in Driver if d.name == driver)
 
-        if servers is None:
-            servers = None
-        else:
+        component = Component(type=type, name=name,
+                              vendor=vendor, comments=comments, driver=driver, hw_id=hw_id)
+
+        if servers is not None:
             servers = select(s for s in Server if s.id in servers)[:]
 
-        component = Component(type=type, name=name, servers=servers,
-                              vendor=vendor, comments=comments, driver=driver, hw_id=hw_id)
+            for s in servers:
+                component.servers.add(s)
 
     return component
 
@@ -411,7 +433,7 @@ def delete_component(name=None, hw_id=None):
         db.execute("DELETE FROM Component "
                "WHERE name='{0}';".format(components[0].name))
         return "Request for deleting component {0} " \
-               "has been accepted"
+               "has been accepted".format(name)
 
 
 if __name__ == '__main__':

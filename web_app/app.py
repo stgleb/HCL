@@ -11,7 +11,11 @@ app = Flask(__name__)
 @app.route('/api/search/server', methods=['POST'])
 @db_session
 def list_servers():
-    d = json.loads(request.data)
+
+    if request.data != '':
+        d = json.loads(request.data)
+    else:
+        d = {}
 
     try:
         servers = api.select_servers(**d)
@@ -203,7 +207,10 @@ def list_all_types():
 @app.route('/api/search/component', methods=['POST'])
 @db_session
 def list_components():
-    d = json.loads(request.data)
+    if request.data != '':
+        d = json.loads(request.data)
+    else:
+        d = {}
 
     try:
         components = api.select_components(**d)

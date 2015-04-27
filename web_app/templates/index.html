@@ -13,64 +13,76 @@
                 <div class="pageHeader">
                     <h1 align="center">Page header</h1>
                 </div>
-                <div class="pageLeftMenu">
-                    <div>
-                        {% for fv in fuel_versions %}
-                            <input type="checkbox" name="option2" value="a2">{{ fv.name }}<br>
-                        {% endfor %}
-                        <br>
-                        <h2>Object type</h2>
-                        <br>
+                <div>
                         <input type="radio" name="group1" value="server">Server<br>
                         <br>
-                        <input type="radio" name="group1" value="component"> Component<br>
+                        <input type="radio" name="group1" value="component">Component<br>
                         <br>
-                    </div>
-                    <div id="component_params" style="display: none;">
-                            <label>Component type</label><br>
+                </div>
+                <div class="pageLeftMenu">
+                    <form id="component_form">
+                        <div>
+                            {% for fv in fuel_versions %}
+                                <input type="checkbox" name="option{{ loop.index }}" value="a2">{{ fv.name }}<br>
+                            {% endfor %}
                             <br>
-                            <select name="component_type">
-                              <option selected="selected">All types</option>
-                                  {% for type in types %}
-                                       <option>{{ type.name }}</option>
-                                  {% endfor %}
-                            </select>
+                            <h2>Object type</h2>
                             <br>
-                            <br>
-                            <label>Component name</label>
-                            <br>
-                            <input type="text"/>
-                            <br><br>
-                            <label>Server</label><br>
-                            <br>
-                            <select name="server">
-                                 {% for server in servers %}
-                                      <option>{{ server.name }}</option>
-                                 {% endfor %}
-                            </select>
-                    </div>
+                        </div>
+                        <div id="component_params">
+                                <label>Component type</label><br>
+                                <br>
+                                <select name="component_type">
+                                  <option selected="selected">All types</option>
+                                      {% for type in types %}
+                                           <option value="{{ type.name }}">{{ type.name }}</option>
+                                      {% endfor %}
+                                </select>
+                                <br>
+                                <br>
+                                <label>Component name</label>
+                                <br>
+                                <input type="text"/>
+                                <br><br>
+                                <label>Server</label><br>
+                                <br>
+                                <select name="server">
+                                     {% for server in servers %}
+                                          <option value="{{ server.name }}">{{ server.name }}</option>
+                                     {% endfor %}
+                                </select>
+                            </div>
+                        </form>
+                        <form id="server_form">
+                            <div>
+                                {% for fv in fuel_versions %}
+                                    <input type="checkbox" name="option{{ loop.index }}" value="a2">{{ fv.name }}<br>
+                                {% endfor %}
+                                <br>
+                                <h2>Object type</h2>
+                                <br>
+                            </div>
+                        </form>
+                       </div>
+                    <input id="search" type="button" value="Search">
                 </div>
                 <div class="pageContent">
-                    <table style="margin:4px;width:100%;border: 1px solid black;border-spacing: 5px;" border="1">
-                        <th>Server_id</th>
-                        <th>Fuel version</th>
-                        <th>Link</th>
-                        <th>Certification result</th>
-                        <th>Certification date</th>
-                        <tr>
-                            <td>1</td>
-                            <td>Fuel 6.0</td>
-                            <td>www.supermicro.com</td>
-                            <td>Success</td>
-                            <td>01.01.2015</td>
-                        </tr>
-                        <tr>
-                            <td>1</td>
-                            <td>Fuel 5.1</td>
-                            <td>www.quanta.com</td>
-                            <td>Planning</td>
-                            <td>02.01.2015</td>
-                        </tr>
+                    <table id="server_table" style="margin:4px;width:100%;border: 1px solid black;border-spacing: 5px;" border="1">
+                        <th>name</th>
+                        <th>vendor</th>
+                        <th>fuel versions</th>
+                        <th>specification url</th>
+                        <th>availability</th>
+                        <th>comments</th>
+                    </table>
+                    <table id="component_table" style="display: none; margin:4px;width:100%;border: 1px solid black;border-spacing: 5px;" border="1">
+                        <th>name</th>
+                        <th>vendor</th>
+                        <th>type</th>
+                        <th>hardware id</th>
+                        <th>driver</th>
+                        <th>fuel versions</th>
+                        <th>comments</th>
                     </table>
                 </div>
                 <div class="pageFooter">

@@ -1,5 +1,6 @@
 import sys
 import argparse
+import traceback
 
 import api
 from api import select_certified_servers, select_certified_components
@@ -490,7 +491,7 @@ def main():
             else:
                 print 'Wrong command, pleasy type command help'
         except Exception:
-            pass
+            traceback.print_stack()
         finally:
             pass
 

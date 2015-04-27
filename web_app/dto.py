@@ -1,3 +1,6 @@
+import datetime
+
+
 class ServerDTO():
     def __init__(self, server):
         self.name = server.name
@@ -38,3 +41,23 @@ class DriverDTO():
 
     version = str
     name = str
+
+
+class FuelVersionDTO():
+    name = str
+
+    def __init__(self, fuel_version):
+        self.name = fuel_version.name
+
+
+class CertificationDTO():
+    server = str
+    date = datetime.date
+    comments = str
+    fuel_version = str
+
+    def __init__(self, certification):
+        self.date = certification.date
+        self.server = certification.server.name
+        self.comments = certification.comments
+        self.fuel_version = certification.fuel_version.name

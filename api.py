@@ -298,11 +298,11 @@ def update_server(components=None, name=None, vendor=None,
                   comments=None, specification_url=None, availability=None):
     server = Server.get(lambda s: s.name == name)
 
-    if name is not None:
+    if name is None:
         raise Exception('Server name is not specified')
 
     if vendor is not None:
-        server.vendor = None
+        server.vendor = vendor
 
     if comments is not None:
         server.comments = comments
@@ -363,13 +363,13 @@ def update_component(servers=None, type=None, name=None, vendor=None,
 
 @lower_case
 @db_session
-def delete_server(name, fuel_versions):
+def delete_server(name="", fuel_versions=None):
     if fuel_versions is None:
         db.execute("DELETE FROM Server "
                    "WHERE name='{0}';".format(name))
 
         return "Request for deleting server {} " \
-               "has been accepted"
+               "has been accepted".format(name)
     else:
         return delete_server_from_certification(name, fuel_versions)
 

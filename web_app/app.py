@@ -1,9 +1,9 @@
+import traceback
 import json
-import pickle
 import api
 from flask import Flask, request, jsonify, Response
 from pony.orm import db_session
-from web_app.dto import ServerDTO, ComponentDTO, DriverDTO
+from web_app.dto import ServerDTO, ComponentDTO, DriverDTO, FuelVersionDTO, CertificationDTO
 
 app = Flask(__name__)
 
@@ -11,12 +11,13 @@ app = Flask(__name__)
 @app.route('/api/search/server', methods=['POST'])
 @db_session
 def list_servers():
-    d = {}
+    d = json.loads(request.data)
 
-    for key, value in request.form.items():
-        d[key] = value
+    try:
+        servers = api.select_servers(**d)
+    except Exception:
+        traceback.print_exception()
 
-    servers = api.select_servers(**d)
     dtos = []
 
     for s in servers:
@@ -36,11 +37,12 @@ def list_servers():
 
 @app.route('/api/server', methods=['POST'])
 def add_server():
-    d = {}
-    for key, value in request.form.items():
-        d[key] = value
+    d = json.loads(request.data)
 
-    s = api.add_server(**d)
+    try:
+        s = api.add_server(**d)
+    except Exception:
+        traceback.print_stack()
 
     dto = ServerDTO(s)
     components = ', '.join([c.name for c in s.components])
@@ -49,18 +51,20 @@ def add_server():
     dto.fuel_versions = fuel_versions
 
     resp = Response(response=json.dumps(dto.__dict__),
-                    status=200,
+                    status=202,
                     mimetype='application/json')
     return resp
 
 
 @app.route('/api/server', methods=['PUT'])
+@db_session
 def update_server():
-    d = {}
-    for key, value in request.form.items():
-        d[key] = value
+    d = json.loads(request.data)
 
-    s = api.update_server(**d)
+    try:
+        s = api.update_server(**d)
+    except Exception:
+        traceback.print_stack()
 
     dto = ServerDTO(s)
     components = ', '.join([c.name for c in s.components])
@@ -68,26 +72,39 @@ def update_server():
     dto.components = components
     dto.fuel_versions = fuel_versions
 
-    return ""
+    resp = Response(response=json.dumps(dto.__dict__),
+                status=202,
+                mimetype='application/json')
+
+    return resp
 
 
 @app.route('/api/server', methods=['DELETE'])
+@db_session
 def delete_server():
-    d = {}
-    for key, value in request.form.items():
-        d[key] = value
+    d = json.loads(request.data)
 
-    return api.delete_server(**d)
+    try:
+        message = api.delete_server(**d)
+    except Exception:
+        traceback.print_stack()
+
+    resp = Response(response=json.dumps(message),
+                    status=202,
+                    mimetype='application/json')
+    return resp
 
 
 @app.route('/api/search/driver', methods=['POST'])
+@db_session
 def list_drivers():
-    d = {}
+    d = json.loads(request.data)
 
-    for key, value in request.form.items():
-        d[key] = value
+    try:
+        drivers = api.select_driver(**d)
+    except Exception:
+        traceback.print_stack()
 
-    drivers = api.select_driver(**d)
     dtos = []
 
     for d in drivers:
@@ -101,29 +118,62 @@ def list_drivers():
 
 
 @app.route('/api/driver', methods=['POST'])
+@db_session
 def add_driver():
-    pass
+    d = json.loads(request.data)
+
+    try:
+        s = api.add_driver(**d)
+    except Exception:
+        traceback.print_stack()
+
+    dto = DriverDTO(s)
+    resp = Response(response=json.dumps(dto.__dict__),
+                    status=201,
+                    mimetype='application/json')
+    return resp
 
 
 @app.route('/api/fuel/driver', methods=['POST'])
+@db_session
 def add_driver_to_fuel():
-    pass
+    d = json.loads(request.data)
+
+    try:
+        s = api.add_driver_to_fuel(**d)
+    except Exception:
+        traceback.print_stack()
+
+    dto = DriverDTO(s)
+    resp = Response(response=json.dumps(dto.__dict__),
+                    status=201,
+                    mimetype='application/json')
+    return resp
 
 
 @app.route('/api/fuel', methods=['POST'])
+@db_session
 def add_fuel_version():
-    pass
+    d = json.loads(request.data)
+
+    s = api.add_fuel_version(**d)
+    dto = FuelVersionDTO(s)
+    resp = Response(response=json.dumps(dto.__dict__),
+                    status=201,
+                    mimetype='application/json')
+    return resp
 
 
 @app.route('/api/search/component', methods=['POST'])
 @db_session
 def list_components():
-    d = {}
+    d = json.loads(request.data)
 
-    for key, value in request.form.items():
-        d[key] = value
+    try:
+        components = api.select_components(**d)
+    except Exception:
+        traceback.print_stack()
 
-    components = api.select_components(**d)
     dtos = []
 
     for c in components:
@@ -147,23 +197,66 @@ def list_components():
 
 
 @app.route('/api/component', methods=['POST'])
+@db_session
 def add_component():
-    pass
+    d = json.loads(request.data)
+
+    try:
+        c = api.add_component(**d)
+    except Exception:
+        traceback.print_stack()
+
+    dto = ComponentDTO(c)
+    fuel_versions_set = set()
+    fuel_versions = ''
+
+    for server in c.servers:
+        [fuel_versions_set.add(x.fuel_version.name) for x in server.certifications]
+
+    for fv in fuel_versions_set:
+        fuel_versions += fv + ' '
+    dto.fuel_versions = fuel_versions
+
+    resp = Response(response=json.dumps(dto.__dict__),
+                    status=201,
+                    mimetype='application/json')
+    return resp
 
 
 @app.route('/api/component', methods=['PUT'])
+@db_session
 def update_component():
-    pass
+    d = json.loads(request.data)
+
+    api.update_component(**d)
+    resp = Response(status=202,
+                    mimetype='application/json')
+    return resp
 
 
 @app.route('/api/fuel/driver', methods=['delete'])
+@db_session
 def delete_component():
-    pass
+    d = json.loads(request.data)
+
+    result = api.delete_component(**d)
+    resp = Response(response=json.dumps(result),
+                    status=202,
+                    mimetype='application/json')
+    return resp
 
 
 @app.route('/api/certification', methods=['POST'])
+@db_session
 def add_certification():
-    pass
+    d = json.loads(request.data)
+
+    s = api.add_certification(**d)
+    dto = CertificationDTO(s)
+    resp = Response(response=json.dumps(dto.__dict__),
+                    status=201,
+                    mimetype='application/json')
+    return resp
 
 if __name__ == '__main__':
     app.run()

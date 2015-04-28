@@ -40,7 +40,8 @@ def select_certified_servers(fuel_versions=None, name=None, vendor=None):
                             for s in Server for c in s.certifications
                             if count(c) == 0)[:]
         servers = [s[0] for s in servers]
-    elif fuel_versions is not None:
+    elif fuel_versions is not None \
+            and len(fuel_versions) > 0:
         #select servers whose certifications are in fuel_versions.
         servers = left_join((s, count(c))
                             for s in Server for c in s.certifications
@@ -86,7 +87,8 @@ def select_certified_components(types=None, fuel_versions=None, server=None,
         components = [c[0] for c in components]
 
         print components
-    elif fuel_versions is not None and fuel_versions != []:
+    elif fuel_versions is not None and \
+                    len(fuel_versions) > 0:
         components = left_join((component, count(server), count(certification))
                                for component in Component
                                for server in component.servers
@@ -100,7 +102,7 @@ def select_certified_components(types=None, fuel_versions=None, server=None,
     else:
         components = select(c for c in Component)[:]
 
-    if types is not None:
+    if types is not None and types != ['all']:
         components = filter(lambda c: c.type in types, components)
 
     if vendor is not None:
@@ -109,7 +111,8 @@ def select_certified_components(types=None, fuel_versions=None, server=None,
     if name is not None:
         components = filter(lambda c: name in c.name, components)
 
-    if server is not None and server != '':
+    if server is not None and server != ''\
+            and server != 'nothing':
         components = filter(lambda c: name in [s.name for s in c.servers], components)
 
     return components

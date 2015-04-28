@@ -11,14 +11,19 @@ app = Flask(__name__)
 @app.route('/api/search/server', methods=['POST'])
 @db_session
 def list_servers():
-
     if request.data != '':
         d = json.loads(request.data)
     else:
         d = {}
 
+        for k in request.form:
+            if k == 'fuel_versions':
+                d[k] = json.loads(request.form[k])
+            else:
+                d[k] = request.form[k]
+
     try:
-        servers = api.select_servers(**d)
+        servers = api.select_certified_servers(**d)
     except Exception:
         traceback.print_exception()
 
@@ -212,8 +217,14 @@ def list_components():
     else:
         d = {}
 
+        for k in request.form:
+            if k == 'fuel_versions' or k == 'types':
+                d[k] = json.loads(request.form[k])
+            else:
+                d[k] = request.form[k]
+
     try:
-        components = api.select_components(**d)
+        components = api.select_certified_components(**d)
     except Exception:
         traceback.print_stack()
 

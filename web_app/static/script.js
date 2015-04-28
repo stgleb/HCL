@@ -6,17 +6,27 @@ jQuery(document).ready(function ()
 
 
 function search() {
-    data = $('#server_form').serializeArray();
     radioValue = $("input:radio[name ='group1']:checked").val();
 
     if(radioValue == "server")
     {
+        data = $('#server_form').serializeArray();
         $('#component_table').hide();
         $('#server_table').show();
+        $("#server_table tr:gt(0)").remove();
+
+
+        fv = []
+        $("#server_fuel_verions").children("input:checked").map(function() {
+            fv.push(this.value)
+            return this.value;
+        });
+        server_name = $("#server_name").val()
 
         $.ajax({
             type: "POST",
-            data: data,
+            traditional : true,
+            data: {name: server_name, fuel_versions: JSON.stringify(fv)},
             url: '/api/search/server',
             dataType : "json",
             success: function (data, textStatus) {
@@ -39,12 +49,26 @@ function search() {
     {
         $('#component_table').show();
         $('#server_table').hide();
-        data = $('#component_form').serializeArray()
+        data = $('#component_form').serializeArray();
+        $("#component_table tr:gt(0)").remove();
+        fv = []
+        $("#component_fuel_verions").children("input:checked").map(function() {
+            fv.push(this.value)
+            return this.value;
+        });
+        types = [$("#component_types").val()]
+        server_name = $('#server_name2').val()
+        name = $('#component_name').val()
+
         $.ajax({
             type: "POST",
             url: '/api/search/component',
             dataType : "json",
-            data: data,
+            traditional : true,
+            data: {name: name,
+                   server: server_name,
+                   types: JSON.stringify(types),
+                   fuel_versions: JSON.stringify(fv)},
             success: function (data, textStatus) {
                 $.each(data, function(i, val) {
                     $.each(data, function(i, val) {

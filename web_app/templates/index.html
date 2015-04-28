@@ -22,9 +22,11 @@
                 <div class="pageLeftMenu">
                     <form id="component_form">
                         <div>
-                            {% for fv in fuel_versions %}
-                                <input type="checkbox" name="option{{ loop.index }}" value="a2">{{ fv.name }}<br>
-                            {% endfor %}
+                            <div id="component_fuel_verions">
+                                {% for fv in fuel_versions %}
+                                    <input type="checkbox" name="fuel_versions" value="{{ fv.name }}">{{ fv.name }}<br>
+                                {% endfor %}
+                            </div>
                             <br>
                             <h2>Object type</h2>
                             <br>
@@ -32,8 +34,8 @@
                         <div id="component_params">
                                 <label>Component type</label><br>
                                 <br>
-                                <select name="component_type">
-                                  <option selected="selected">All types</option>
+                                <select id="component_types" name="types">
+                                  <option selected="selected" value="">All types</option>
                                       {% for type in types %}
                                            <option value="{{ type.name }}">{{ type.name }}</option>
                                       {% endfor %}
@@ -42,11 +44,12 @@
                                 <br>
                                 <label>Component name</label>
                                 <br>
-                                <input type="text"/>
+                                <input id="component_name" name="name" type="text"/>
                                 <br><br>
                                 <label>Server</label><br>
                                 <br>
-                                <select name="server">
+                                <select id="server_name2" name="server">
+                                     <option value="">nothing</option>
                                      {% for server in servers %}
                                           <option value="{{ server.name }}">{{ server.name }}</option>
                                      {% endfor %}
@@ -55,11 +58,16 @@
                         </form>
                         <form id="server_form">
                             <div>
-                                {% for fv in fuel_versions %}
-                                    <input type="checkbox" name="option{{ loop.index }}" value="a2">{{ fv.name }}<br>
-                                {% endfor %}
+                                <div id="server_fuel_verions">
+                                    {% for fv in fuel_versions %}
+                                        <input type="checkbox" name="fuel_versions" value="{{ fv.name }}">{{ fv.name }}<br>
+                                    {% endfor %}
+                                </div>
                                 <br>
-                                <h2>Object type</h2>
+                                <br>
+                                <label>Server name</label>
+                                <br>
+                                <input id="server_name" name="name" type="text"/>
                                 <br>
                             </div>
                         </form>

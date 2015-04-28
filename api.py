@@ -73,7 +73,7 @@ def select_components(types=None, name=None):
 
 
 @db_session
-def select_certified_components(types=None, fuel_versions=None,
+def select_certified_components(types=None, fuel_versions=None, server=None,
                                 vendor=None, name=None):
     if fuel_versions == ['None']:
         components = left_join((component, server, count(certification))
@@ -86,7 +86,7 @@ def select_certified_components(types=None, fuel_versions=None,
         components = [c[0] for c in components]
 
         print components
-    elif fuel_versions is not None:
+    elif fuel_versions is not None and fuel_versions != []:
         components = left_join((component, count(server), count(certification))
                                for component in Component
                                for server in component.servers
@@ -108,6 +108,9 @@ def select_certified_components(types=None, fuel_versions=None,
 
     if name is not None:
         components = filter(lambda c: name in c.name, components)
+
+    if server is not None and server != '':
+        components = filter(lambda c: name in [s.name for s in c.servers], components)
 
     return components
 

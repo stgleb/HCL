@@ -19,7 +19,7 @@
                         <input type="radio" name="group1" value="component">Component<br>
                         <br>
                 </div>
-                <div class="pageLeftMenu">
+                <div style="float: left; width: 30%">
                     <form id="component_form">
                         <div>
                             <div id="component_fuel_verions">
@@ -35,7 +35,7 @@
                                 <label>Component type</label><br>
                                 <br>
                                 <select id="component_types" name="types">
-                                  <option selected="selected" value="">All types</option>
+                                  <option selected="selected" value="all">All types</option>
                                       {% for type in types %}
                                            <option value="{{ type.name }}">{{ type.name }}</option>
                                       {% endfor %}
@@ -71,8 +71,8 @@
                                 <br>
                             </div>
                         </form>
-                       </div>
                     <input id="search" type="button" value="Search">
+                       </div>
                 </div>
                 <div class="pageContent">
                     <table id="server_table" style="margin:4px;width:100%;border: 1px solid black;border-spacing: 5px;" border="1">

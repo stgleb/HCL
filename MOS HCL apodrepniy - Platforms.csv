@@ -1,0 +1,52 @@
+,,,,,,,,
+,,,,,,,,
+,HW Platform / Component,Specification URL,Availability,NIC,Chipset,RAID on MB,Additional RAID,Comment
+,Supermicro SuperServer 5037MR-H8TRF,http://www.supermicro.com/products/system/3U/5037/SYS-5037MR-H8TRF.cfm,Mirantis / MOS-Linux,Intel® 82580,Intel® C204 PCH,no,No data
+,Supermicro SuperServer 5017R-MTF,http://www.supermicro.com/products/system/1U/5017/SYS-5017R-MTF.cfm,Mirantis / MOS-Linux,Intel® i350 Dual port,Intel® C602,yes,,
+,SuperMicro SuperServer 6027TR-H71RF+,http://www.supermicro.com/products/system/2U/6027/SYS-6027TR-H71RF_.cfm,NetFlix,Intel® i350 Dual port,Intel® C602,LSI 2108 SAS2 (6Gbps) w/ Hardware RAID support (BPN-ADP-SAS2-H6iR),No data,
+,SuperMicro X9DR3-F,http://www.supermicro.com/products/motherboard/Xeon/C600/X9DR3-F.cfm,Mellanox,Intel® i350 Dual port,Intel® C606,SAS from C606,No data,
+?,SuperMicro SuperServer 6027TR-HTRF (Q),http://www.supermicro.com/products/system/2U/6027/SYS-6027TR-HTQRF.cfm,Mellanox,Intel® i350 Dual port,Intel® C602,??? Mellanox ConnectX-3 QDR Infiniband 40Gbps Controller,No data,
+?,Supermicro X9DRW,http://www.supermicro.com/products/motherboard/xeon/c600/x9drw-if.cfm,Citrix,Intel® i350 Dual port,Intel® C602,yes,No data,
+,Supermicro SuperServer  6041R E1R36,http://www.supermicro.com/products/system/4U/6047/SSG-6047R-E1R36N.cfm,"""?""",Intel® i350 Dual port,Intel® C602,yes,No data,Availability - no data
+,,,,,,,,
+?,HP P420i/ZM + B120 + P222,?,Mirantis,?,?,? P420i/ZM,,No details about RAID
+? R,- // -,,,,,,B120i,
+? R,- // -,http://h30094.www3.hp.com/product/sku/10389147,,,,,P222,
+,,,,,,,,
+,Dell PowerEdge R620,http://www.dell.com/rs/business/p/poweredge-r620/pd,"Ericsson, IGT, US-Signal",?,Intel® C600,?,No data,NIC and RAID - no data
+,- // -,- // -,Pacnet,,,,No data,
+,Dell PowerEdge R630,http://www.dell.com/ua/business/p/poweredge-r630/pd,,?,Intel® C610,PERC H330,No data,"NIC and RAID - no data, Availability - no data"
+,- // -,- // -,Ericsson,?,Intel® C610,?,No data,NIC and RAID - no data
+,Dell PowerEdge C6220,http://www.dell.com/ua/business/p/poweredge-c6220/pd,"""?""",Intel® i350 Dual port,Intel® C602,no,No data,"Availability - no data, Model c6220 or c6220-2 - no data"
+,- // -,- // -,Ericsson Monreal,Intel® i350 Dual port,Intel® C602,no,No data,Model c6220 or c6220-2 - no data
+,Dell PowerEdge BL460 Gen9,http://www8.hp.com/us/en/products/proliant-servers/product-detail.html?oid=7271227#!tab=specs,Ericsson,?,?,?,No data,"Described HP ProLiant BL460c Gen9, Not full model name"
+,Dell PowerEdge R720,http://www.dell.com/ru/business/p/poweredge-r720/pd,"Ericsson, 21CT, GSI",?,Intel® C600,?,No data,NIC and RAID - no data
+,Dell PowerEdge R720xd,http://www.dell.com/ru/business/p/poweredge-r720xd/pd,"Mellanox, DirectTV",?,Intel® C600,?,No data,NIC and RAID - no data
+,Dell PowerEdge R730xd,http://www.dell.com/rs/business/p/poweredge-r730xd/pd,New,?,Intel® C610,?,No data,"Availability - ???,NIC and RAID - no data"
+,Dell PowerEdge R820,http://www.dell.com/ua/business/p/poweredge-r820/pd,Wells Fargo,?,Intel® C600,?,No data,NIC and RAID - no data
+,Dell PowerEdge M620,http://www.dell.com/ua/business/p/poweredge-m620/pd,"ReachLocal-IceHouse, DirectTV",?,Intel® C600,?,No data,NIC and RAID - no data
+?,Dell PowerEdge M1000,http://www.dell.com/ua/business/p/poweredge-m1000e/pd,ReachLocal-IceHouse,-,-,-,-,"M1000 - it's chassis, not server, Model M1000 or M1000e - no data"
+,,,,,,,,
+? ? ?,Supermicro (TBD),,HW Certification Program,,,,,
+?,Cisco UCS-B Series Blade Server,,Cisco Preffered Solution Partner Program,-,-,-,-,Different blade servers models 
+?,Cisco UCS-C Series Blade Server,,Cisco Preffered Solution Partner Program,-,-,-,-,Different blade servers models 
+,Cisco UCS C240 M3,http://www.cisco.com/c/en/us/products/collateral/servers-unified-computing/ucs-c240-m3-rack-server/data_sheet_c78-700629.html,Cisco Preffered Solution Partner Program,?,Intel® C600,?,No data,"Specification don't have details about NIC and RAID, Models - ""Small Form Factor"" and ""Large Form Factor"""
+,- // -,- // -,Home Depot,?,Intel® C600,?,No data,
+,,,,,,,,
+,Huawei FusionCube,http://enterprise.huawei.com/en/products/itapp/converged/converged/hw-200432.htm,"""?"" - Mentioned in D. Easter's compatibility list",,,,,"Availability - no data,""V"" and ""D"" series available"
+,Huawei CH121,http://enterprise.huawei.com/en/products/itapp/server/e-series-blade-server/hw-258398.htm,Huawei,?,?,?,No data,"Specification don't have details about NIC, chipset and RAID,Have different models"
+,Huawei CH222,http://enterprise.huawei.com/en/products/itapp/server/e-series-blade-server/hw-258391.htm,Huawei,?,?,?,No data,"Specification don't have details about NIC, chipset and RAID,Have different models"
+?,Huawei RH2288,http://enterprise.huawei.com/en/products/itapp/server/rh-series-rack-servers/hw-367422.htm,FutureWei (Huawei),?,?,?,No data,"Specification don't have details about NIC, chipset and RAID,Have different models"
+,,,,,,,,
+,Lenovo RD330,http://www.lenovo.com/images/products/server/pdfs/datasheets/thinkserver_rd330_ds.pdf,University of Hawaii,Intel® i350 Dual port,Intel® C600,?,No data,"NIC and RAID - no data, Specification don't have details about NIC, chipset and RAID"
+,Lenovo RD340,http://www.lenovo.com/images/products/server/pdfs/datasheets/thinkserver_rd340_ds.pdf,University of Hawaii,?,?,?,No data,"NIC and RAID - no data, Specification don't have details about NIC, chipset and RAID"
+,Lenovo RD530,http://shop.lenovo.com/us/en/servers/thinkserver/racks/rd530/#tab-tech_specs,University of Hawaii,Intel® i350 Dual port,Intel® C602,?,No data,"RAID - no data,Specification don't have details about RAID"
+,Lenovo RD630,http://shop.lenovo.com/us/en/servers/thinkserver/racks/rd630/#tab-tech_specs,University of Hawaii,Intel® i350 Dual port,Intel® C602,?,No data,"RAID - no data,Specification don't have details about RAID"
+,,,,,,,,
+,HP ProLiant DL360e Gen8,http://www8.hp.com/h20195/v2/GetDocument.aspx?docname=c04128167,[24]7Inc. - Mentioned in D. Easter's compatibility list,HP Ethernet 1Gb 4-port 366i Adapter,Intel® C600,?,No data,RAID - no data
+,HP ProLiant DL360p Gen8,http://www8.hp.com/h20195/v2/GetDocument.aspx?docname=c04128242,Mellanox,?,Intel® C600,?,No data,RAID - no data
+,,,,,,,,
+,,,,,,,,
+,Just for test - data from MOX team lab,,,,,,,
+,MB: Supermicro X9SCI/X9SCA,,MOX,Intel 82574L Gigabit,Intel® C604,yes,none,
+,MB: Supermicro X8DTU,,MOX,Intel 82576 Gigabit,Intel® 5520,yes,none,

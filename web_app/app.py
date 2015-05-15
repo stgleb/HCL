@@ -324,7 +324,3 @@ def index():
                            types=types,
                            servers=servers)
 
-
-if __name__ == '__main__':
-    app.run(port=8000)
-
